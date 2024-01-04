@@ -204,8 +204,13 @@ void Swerve::drive(float y, float x, float x2, float gyro)
         /* This stop it from going 360 around (all michael's fault if it breaks)*/
         if((this->raw_usable[i] - this->ANGLE_ENCODERS[i]->GetPosition()) > SWERVE_WHEEL_COUNTS_PER_REVOLUTION)
         {
-            this->raw_usable[i] = -((SWERVE_WHEEL_COUNTS_PER_REVOLUTION*2)-(this->raw_usable[i] - this->ANGLE_ENCODERS[i]->GetPosition()));
+            this->raw_usable[i] = -((SWERVE_WHEEL_COUNTS_PER_REVOLUTION*2)-abs(this->raw_usable[i]));
         }
+        if((this->raw_usable[i] - this->ANGLE_ENCODERS[i]->GetPosition()) < -SWERVE_WHEEL_COUNTS_PER_REVOLUTION)
+        {
+            this->raw_usable[i] = ((SWERVE_WHEEL_COUNTS_PER_REVOLUTION*2)-abs(this->raw_usable[i]));
+        }
+
         if(use_old)
         {
             this->PID_CONTROLLERS[i]->SetReference(this->last_units[i],CANSparkMax::ControlType::kPosition);
